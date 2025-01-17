@@ -8,7 +8,7 @@ const verifyToken = async (req, res, next) => {
     console.log(token, "token----------------------");
 
     if (!token) {
-      res.status(403).send("Token is required");
+      res.status(403).send({message : "Token is required"});
       return;
     }
     const decoded = jwtDecode(token)

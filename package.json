@@ -1,10 +1,10 @@
 {
   "name": "todo-folder-structure",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "test": "jest",
+    "test": "mocha 'src/test/**/*.js' --timeout 10000",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
@@ -28,6 +28,14 @@
     "url": "^0.11.4"
   },
   "devDependencies": {
-    "jest": "^29.7.0"
+    "@babel/cli": "^7.26.4",
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "babel-register": "^6.26.0",
+    "chai": "^5.1.2",
+    "chai-http": "^5.1.1",
+    "mocha": "^11.0.1",
+    "sinon": "^19.0.2",
+    "supertest": "^7.0.0"
   }
 }

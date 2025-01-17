@@ -7,8 +7,11 @@ export const todo_add = async (req, res) => {
   }
 
   const { title, description } = req.body;
-  if (!title || !description) {
-    return res.status(400).send({ message: "All fields are required." });
+  if (!title ) {
+    return res.status(400).send({ message: "Title is required." });
+  }
+  if (!description) {
+    return res.status(400).send({ message: "Description is required." });
   }
 
   try {
@@ -53,7 +56,7 @@ export const todo_update = async (req, res) => {
     console.log(req.userId, todoId, "both id-------------");
 
     const matchIdResult = await db.query(
-      "SELECT id,user_id FROM todo_data WHERE id = $1 and user_id = $2;",
+      "SELECT * FROM todo_data WHERE id = $1 and user_id = $2;",
       [todoId, req.userId]
     );
     console.log(matchIdResult.rows[0]);
@@ -63,8 +66,15 @@ export const todo_update = async (req, res) => {
       res.status(404).send({ message: "Todo not found" });
     } else {
       if (user.id == todoId && user.user_id == req.userId) {
+
+        let newTitle = matchIdResult.rows[0].title
+        let newDescription = matchIdResult.rows[0].description
+
+        if(title) newTitle = title
+        if(description) newDescription = description
+        
         await db.query(
-          "update todo_data set title=$1, description=$2 where (id=$3 and user_id=$4)",
+          "update todo_data set title = coalesce($1, title), description = coalesce($2, description) where (id=$3 and user_id=$4)",
           [title, description, todoId, req.userId]
         );
         res.status(200).send({
@@ -83,6 +93,8 @@ export const todo_update = async (req, res) => {
 
 export const todo_show = async (req, res) => {
   const id = req.userId;
+  console.log(id,"userid-----------");
+  
 
   if (!req.userId) {
     console.log("user not found in todo");
@@ -93,6 +105,8 @@ export const todo_show = async (req, res) => {
     const result = await db.query("select * from todo_data where user_id=$1 ", [
       req.userId,
     ]);
+    console.log(result,"---------------------");
+    
     const userToDoData = result.rows;
     res.status(200).send({ userToDoData });
   } catch (err) {
@@ -119,7 +133,7 @@ export const todo_delete = async (req, res) => {
     console.log(matchIdResult.rows);
     
     if (matchIdResult.rows.length < 1) {
-      res.status(405).send({ message: "can not delete" });
+      res.status(405).send({ message: "you can not authries to delete." });
     } else {
       const result = await db.query(
         "delete from todo_data where id=$1 and user_id=$2 ",

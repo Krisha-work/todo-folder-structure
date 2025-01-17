@@ -9,7 +9,7 @@ export const validateEmail = (email) => {
 };
 
 export const validateContact = (contact) => {
-  const regex = /^\d+$/;
+  const regex = /^[6-9]\d{9}$/;
   return regex.test(contact);
 };
 
