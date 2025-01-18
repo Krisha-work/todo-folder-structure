@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import apiRouter from "./api/index.js";
+import { StatusCode } from "./utils/helper/constant.js";
 import "path";
 // import env f
 // rom "dotenv";
@@ -16,22 +17,22 @@ const start_server = async () => {
     app.use(express.json());
 
     app.get("/", (req, res) => {
-      res.status(200).send({ message: "This is home page" });
+      res.status(StatusCode.SUCCESS).send({ message: "This is home page" });
     });
 
     app.use("/api", apiRouter);
     app.get("/health", (req, res) => {
-      return res.status(200).send({ message: "Ok, Working fine." });
+      return res.status(StatusCode.SUCCESS).send({ message: "Ok, Working fine." });
     });
 
     app.listen(process.env.SERVER_PORT, () =>
       console.log(
         `Server running on http://localhost:${process.env.SERVER_PORT}`,
-        "\nserver start--------------"
       )
     );
   } catch (err) {
     console.log("server Error");
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).send({message : "Server Error"})
   }
 };
 

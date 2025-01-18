@@ -1,4 +1,5 @@
 import db from "../../database/index.js";
+import { todoQuery } from "../../database/queries.js";
 
 export const todo_add = async (req, res) => {
   if (!req.userId) {
@@ -15,13 +16,12 @@ export const todo_add = async (req, res) => {
   }
 
   try {
-    await db.query(
-      "INSERT INTO todo_data (title, description, user_id)VALUES ($1, $2, $3) RETURNING id ",
-      [title, description, req.userId]
+    const addTodo = todoQuery.addTodo
+    await db.query(addTodo,[title, description, req.userId]
     );
 
-    const findUsername = await db.query(
-      "select username from todo_data inner join userdata on todo_data.user_id = userdata.id where userdata.id = $1;",
+    const userTodoJoin = todoQuery.userTodoJoin
+    const findUsername = await db.query(userTodoJoin,
       [req.userId]
     );
     const matchUsername = findUsername.rows[0].username;
@@ -55,8 +55,8 @@ export const todo_update = async (req, res) => {
   try {
     console.log(req.userId, todoId, "both id-------------");
 
-    const matchIdResult = await db.query(
-      "SELECT * FROM todo_data WHERE id = $1 and user_id = $2;",
+    const matchTodoId = todoQuery.matchTodoId
+    const matchIdResult = await db.query(matchTodoId,
       [todoId, req.userId]
     );
     console.log(matchIdResult.rows[0]);
@@ -73,8 +73,8 @@ export const todo_update = async (req, res) => {
         if(title) newTitle = title
         if(description) newDescription = description
         
-        await db.query(
-          "update todo_data set title = coalesce($1, title), description = coalesce($2, description) where (id=$3 and user_id=$4)",
+        const updateTodo = todoQuery.updateTodo
+        await db.query( updateTodo,
           [title, description, todoId, req.userId]
         );
         res.status(200).send({
@@ -102,7 +102,8 @@ export const todo_show = async (req, res) => {
   }
 
   try {
-    const result = await db.query("select * from todo_data where user_id=$1 ", [
+    const matchUserId = todoQuery.matchUserId
+    const result = await db.query(matchUserId,[
       req.userId,
     ]);
     console.log(result,"---------------------");
@@ -126,8 +127,8 @@ export const todo_delete = async (req, res) => {
   console.log(todoId);
   
   try {
-    const matchIdResult = await db.query(
-      "SELECT id,user_id FROM todo_data WHERE id = $1 and user_id = $2;",
+    const matchTodoId = todoQuery.matchTodoId
+    const matchIdResult = await db.query(matchTodoId,
       [todoId, req.userId]
     );
     console.log(matchIdResult.rows);
@@ -135,8 +136,8 @@ export const todo_delete = async (req, res) => {
     if (matchIdResult.rows.length < 1) {
       res.status(405).send({ message: "you can not authries to delete." });
     } else {
-      const result = await db.query(
-        "delete from todo_data where id=$1 and user_id=$2 ",
+      const deleteTodo = todoQuery.deleteTodo
+      const result = await db.query(deleteTodo,
         [id.id, req.userId]
       );
       console.log(result.rows[0]);

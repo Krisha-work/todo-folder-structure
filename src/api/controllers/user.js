@@ -1,20 +1,19 @@
 import db from "../../database/index.js";
 import jwt from "jsonwebtoken";
 import bcryt from "bcryptjs";
-// import  userQueries  from "../../utils/user.js";
-
-import {
-  validateEmailOrContact,
-  validatePassword,
-  validateContact,
-  validateEmail,
-} from "../../utils/validation.js";
+import { userQuery } from "../../database/queries.js";
+import { register_validtaion } from "../../modules/user.js";
 
 export const register = async (req, res) => {
-  // console.log(userQueries.matchUser, "user part query");
 
-  // const posted_data = req.body
+  // const validationError = register_validtaion(req, res);
+  // if(validationError) ret
+
   const { username, email, password, contact } = req.body;
+
+  
+
+
   if (!username) {
     return res.status(400).send({ message: "Username is requrie" });
   }
@@ -41,8 +40,8 @@ export const register = async (req, res) => {
   }
 
   try {
-    const matchUsernameResult = await db.query(
-      "SELECT * FROM userdata WHERE username = $1;",
+    const matchUser = userQuery.matchUsername
+    const matchUsernameResult = await db.query(matchUser,
       [username]
     );
 
@@ -58,8 +57,8 @@ export const register = async (req, res) => {
     const hashedPassword = await bcryt.hash(password, 8);
 
     // Insert the new user into the database
-    const result = await db.query(
-      "INSERT INTO userdata (username, email, password, contact) VALUES ($1, $2, $3, $4) RETURNING id;",
+    const adduser = userQuery.addUser
+    const result = await db.query(adduser,
       [username, email, hashedPassword, contact]
     );
 
@@ -88,8 +87,8 @@ export const userLogin = async (req, res) => {
 
 
   try {
-    const result = await db.query(
-      "SELECT * FROM userdata WHERE email=$1 OR contact=$1",
+    const matchEmailOrContact = userQuery.matchEmailOrContact
+    const result = await db.query(matchEmailOrContact,
       [emailOrContact]
     );
     const user = result.rows[0];
@@ -118,13 +117,14 @@ export const userLogin = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
   const id = req.params;
+  
   if (!req.userId) {
     res.status(404).send({ message: "user not found" });
   }
 
   try {
-    const matchIdResult = await db.query(
-      "SELECT * FROM userdata WHERE id = $1;",
+    const matchUserId = userQuery.matchUserId
+    const matchIdResult = await db.query(matchUserId,
       [id.id]
     );
 
@@ -136,7 +136,8 @@ export const logoutUser = async (req, res) => {
     } else {
       if (matchIdResult.rows[0].id == req.userId) {
         // Insert the new user into the database
-        const result = await db.query("delete from userdata where id=$1", [
+        const deleteUser = userQuery.deleteUser
+        const result = await db.query(deleteUser, [
           req.userId,
         ]);
         const userRead = result.rows[0];
@@ -158,7 +159,7 @@ export const logoutUser = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-  const id = req.params;
+  const id = req.params;  
 
   if (!req.userId) {
     res.status(404).send({ message: "user not found" });
@@ -168,8 +169,8 @@ export const updateUser = async (req, res) => {
   console.log(password, "-----------");
 
   try {
-    const matchIdResult = await db.query(
-      "SELECT * FROM userdata WHERE id = $1;",
+    const matchUserId = userQuery.matchUserId
+    const matchIdResult = await db.query(matchUserId,
       [id.id]
     );
 
@@ -180,23 +181,6 @@ export const updateUser = async (req, res) => {
       });
     } else {
       if (matchIdResult.rows[0].id == req.userId) {
-        // Validate input fields
-
-        // if (!validateEmail(email)) {
-        //   return res
-        //     .status(400)
-        //     .send({ message: "Email format does not match" });
-        // }
-        // if (!validatePassword(password)) {
-        //   return res
-        //     .status(400)
-        //     .send({ message: "Password format does not match" });
-        // }
-        // if (!validateContact(contact)) {
-        //   return res
-        //     .status(400)
-        //     .send({ message: "Contact format does not match" });
-        // }
 
         // Hash the password
         let newUsername = matchIdResult.rows[0].username;
@@ -210,20 +194,20 @@ export const updateUser = async (req, res) => {
         if (contact) newContact = contact;
 
         // Insert the new user into the database
-        await db.query(
-          "UPDATE userdata SET username = coalesce ($1, username), email = coalesce($2, email), password = coalesce($3, password), contact = coalesce($4, contact) WHERE id=$5;",
-          [newUsername, newEmail, newPassword, newContact, req.userId]
+        const updateUser = userQuery.updateUser
+        await db.query(updateUser,[newUsername, newEmail, newPassword, newContact, req.userId]
         );
 
         // Send a success response
         res.status(200).send({
           message: "Signup data update successfully",
-          username: username,
-          email: email,
-          contact: contact,
+          username,
+          email,
+          contact,
         });
         ``;
       } else {
+
         return res.status(400).send({
           message: "User can not access another data",
         });
@@ -243,7 +227,8 @@ export const userShow = async (req, res) => {
   }
 
   try {
-    const result = await db.query("select * from userdata  where id=$1 ", [
+    const matchUserId = userQuery.matchUserId
+    const result = await db.query(matchUserId, [
       req.userId,
     ]);
     // console.log(result, "result");

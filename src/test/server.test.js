@@ -8,7 +8,7 @@ import {
   validatePassword,
   validateContact,
   validateEmail,
-} from "../utils/validation.js";
+} from "../utils/validation/common-validation.js";
 
 const server = use(chaiHttp);
 
