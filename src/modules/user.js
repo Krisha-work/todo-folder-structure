@@ -1,61 +1,68 @@
-import { StatusCode } from "../utils/helper/constant.js";
 import {
   validUsername,
   validateEmail,
   validatePassword,
   validateContact,
-  validateEmailOrContact
+  validateEmailOrContact,
 } from "../utils/validation/common-validation.js";
 
-export const register_validtaion = (req, res) => {
-  const { username, email, password, contact } = req;
+export const register_validtaion = (body) => {
+  const { username, email, password, contact } = body;
 
-//   const usernamValid = validUsername(username);
-//   const emailvalidation = validateEmail(email);
-//   const passValidation = validatePassword(password);
-//   const contactValidation = validateContact(contact);
+  const usernamValid = validUsername(username);
+  const emailvalidation = validateEmail(email);
+  const passValidation = validatePassword(password);
+  const contactValidation = validateContact(contact);
 
-  if (validUsername(username)) {
-    return res
-      .status(validUsername(username).status || 400)
-      .send({ message: validUsername(username).message });
+  if (usernamValid !== true) {
+    return usernamValid;
   }
-  if (validateEmail(email)) {
-    return res
-      .status(validateEmail(email).status || 400)
-      .send({ message: validateEmail(email).message });
+  if (emailvalidation !== true) {
+    return emailvalidation;
   }
-  if (validatePassword(password)) {
-    return res
-      .status(validatePassword(password).status || 400)
-      .send({ message: validatePassword(password).message });
+  if (passValidation !== true) {
+    return passValidation;
   }
-  if (validateContact(contact)) {
-    return res
-      .status(validateContact(contact).status || 400)
-      .send({ message: validateContact(contact).message });
+  if (contactValidation !== true) {
+    return contactValidation;
   }
+
   return true;
-  
 };
 
 
-export const login_validation = (req, res) => {
-  const { emailOrContact, password } = req.body;
+export const login_validation = (body) => {
+  const { emailOrContact, password } = body;
 
-//   const emailContactValidation = validateEmailOrContact(emailOrContact);
-//   const passValidation = validatePassword(password);
+  const emailContactValidation = validateEmailOrContact(emailOrContact);
+  const passValidation = validatePassword(password);
 
-  if (validateEmailOrContact(emailOrContact)) {
-    return res
-      .status(validateEmailOrContact(emailOrContact).status)
-      .send({ message: validateEmailOrContact(emailOrContact).message });
+  if (emailContactValidation) {
+    return emailContactValidation;
   }
-  if (validatePassword(password)) {
-    return res
-      .status(validatePassword(password).status)
-      .send({ message: validatePassword(password).message });
+  if (passValidation) {
+    return passValidation;
   }
 
-  return null;
+  return true;
+};
+
+export const update_user_validation = (body) => {
+  const { username, email, password, contact } = body;
+
+  const usernamValid = validUsername(username);
+  const emailvalidation = validateEmail(email);
+  const passValidation = validatePassword(password);
+  const contactValidation = validateContact(contact);
+
+  if (usernamValid !== true) {
+    return usernamValid;
+  } else if (emailvalidation !== true) {
+    return emailvalidation;
+  } else if (passValidation !== true) {
+    return passValidation;
+  } else if (contactValidation !== true) {
+    return contactValidation;
+  }
+  return true;
 };
