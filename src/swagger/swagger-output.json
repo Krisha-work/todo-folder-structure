@@ -1,0 +1,565 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "My api CRUD",
+    "description": "Api CURD perfom on user and todo",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": ["http"],
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Enter 'Bearer <your_jwt_token>' to authenticate"
+    }
+  },
+  "paths": {
+    "/api/user/register": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "example": "testuser"
+                },
+                "email": {
+                  "example": "test@gmail.com"
+                },
+                "password": {
+                  "example": "test@12345"
+                },
+                "contact": {
+                  "example": "9876543210"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "examples": {
+              "application/json": {
+                "message": "Signup data inserted successfully",
+                "username": "testuser",
+                "email": "test@gmail.com",
+                "password": "$2a$08$ARPbubLyQH6XfMq.cfuEBeXdjawfNKhmdp6VlwkVgJMqgXnZzp1Zm",
+                "contact": "9876543210"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "examples": {
+              "application/json": {
+                "message": "Username is requrie"
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "examples": {
+              "application/json": {
+                "message": "User already exists",
+                "existingUser": [
+                  {
+                    "id": "<UserId_from_database>",
+                    "username": "testuser",
+                    "email": "test@gmail.com",
+                    "password": "$2a$08$ARPbubLyQH6XfMq.cfuEBeXdjawfNKhmdp6VlwkVgJMqgXnZzp1Zm",
+                    "contact": "9876543210"
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "examples": {
+              "application/json": {
+                "message": "Somthing went wrong in SignUp."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "emailOrContact": {
+                  "example": "test@gmail.com"
+                },
+                "password": {
+                  "example": "test@12345"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "Login successful",
+                "token": "<Genreted_token>",
+                "user": {
+                  "id": "<UserId_from_database>",
+                  "username": "testuser",
+                  "email": "test@gmail.com",
+                  "password": "$2a$08$ARPbubLyQH6XfMq.cfuEBeXdjawfNKhmdp6VlwkVgJMqgXnZzp1Zm",
+                  "contact": "9876543210"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "examples": {
+              "application/json": {
+                "message": "Email Or Contact is requrie"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "message": "Invalid credentials in email or Contact."
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "examples": {
+              "application/json": {
+                "message": "Somthing went wrong in Login."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/userdata": {
+      "get": {
+        "description": "",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "userData": {
+                  "id": "<UserId_from_database>",
+                  "username": "testuser",
+                  "email": "test@gmail.com",
+                  "password": "$2a$08$ARPbubLyQH6XfMq.cfuEBeXdjawfNKhmdp6VlwkVgJMqgXnZzp1Zm",
+                  "contact": "9876543210"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "examples": {
+              "application/json": {
+                "message": "user not found"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "examples": {
+              "application/json": {
+                "message": "userid not found in token."
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "examples": {
+              "application/json": {
+                "message": "Somthong went wrong in user data get."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/user/{id}": {
+      "put": {
+        "description": "",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Enter user id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "example": "testuser"
+                },
+                "email": {
+                  "example": "test@gmail.com"
+                },
+                "password": {
+                  "example": "test@12345"
+                },
+                "contact": {
+                  "example": "test@example.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "User data updated successfully",
+                "username": "testuser",
+                "email": "test@gmail.com",
+                "contact": "9876543210"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "examples": {
+              "application/json": {
+                "message": "User is not exist"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "examples": {
+              "application/json": {
+                "message": "userid not found in token."
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "examples": {
+              "application/json": {
+                "message": "Somthing went wrong in user update."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/logout/{id}": {
+      "delete": {
+        "description": "",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "Logout successfully"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "examples": {
+              "application/json": {
+                "message": "You are not authorized"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "examples": {
+              "application/json": {
+                "message": "User is not exist"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "examples": {
+              "application/json": {
+                "message": "Somthing went wrong in user logout"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/todo/todoadd": {
+      "post": {
+        "description": "",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "example": "test title 1"
+                },
+                "description": {
+                  "example": "test description 1"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "examples": {
+              "application/json": {
+                "message": "to do data insert successfully",
+                "title": "test title 2",
+                "description": "test description 1",
+                "username": "testuser"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "examples": {
+              "application/json": {
+                "message": "Title is requrie"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "examples": {
+              "application/json": {
+                "message": "User Id not found in token."
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "examples": {
+              "application/json": {
+                "message": "Somthing went wrong in todo create."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/todo/todos": {
+      "get": {
+        "description": "",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "todos": [
+                  {
+                    "id": "<todo_id_from_database>",
+                    "title": "test title 2",
+                    "description": "test description 1",
+                    "user_id": "<user_id_from_database>"
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "examples": {
+              "application/json": {
+                "userId": "<user_id_from_database>",
+                "message": "user not found"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "examples": {
+              "application/json": {
+                "message": "Somthing went wrong in todo get."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/todo/todo/{id}": {
+      "put": {
+        "description": "",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "example": "test title 2"
+                },
+                "description": {
+                  "example": "test description 2"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "todos": [
+                  {
+                    "id": "<todo_id_from_database>",
+                    "title": "test title 2",
+                    "description": "test description 2",
+                    "user_id": "<user_id_from_database>"
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "examples": {
+              "application/json": {
+                "message": "user not found"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "examples": {
+              "application/json": {
+                "message": "Somthing went wrong in todo update"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/todo/remove/{id}": {
+      "delete": {
+        "description": "",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "To-Do deleted successfully",
+                "id": "<todo_id_from_database>"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "message": "you can not authries to delete."
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "examples": {
+              "application/json": {
+                "message": "user not found"
+              }
+            }
+          },
+          "500": {
+            "description": "Method Not Allowed",
+            "examples": {
+              "application/json": {
+                "message": "somthing went erong in todo delete."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

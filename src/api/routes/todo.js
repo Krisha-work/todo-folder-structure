@@ -9,7 +9,7 @@ app.use(verifyToken);
 app.post('/todoadd',todo_add)
 app.get('/todos', todo_show)
 app.put('/todo/:id', todo_update)
-app.delete('/todo/:id', todo_delete)
+app.delete('/remove/:id', todo_delete)
 
 
 export default app;

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha 'src/test/**/*.js' --timeout 10000",
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "generateDoc": "node src/swagger/swagger.js"
   },
   "author": "krisha",
   "license": "ISC",
@@ -25,6 +26,7 @@
     "pg": "^8.13.1",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.5",
+    "swagger-ui-express": "^5.0.1",
     "url": "^0.11.4"
   },
   "devDependencies": {
@@ -36,6 +38,7 @@
     "chai-http": "^5.1.1",
     "mocha": "^11.0.1",
     "sinon": "^19.0.2",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "swagger-autogen": "^2.23.7"
   }
 }

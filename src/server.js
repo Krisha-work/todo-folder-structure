@@ -2,6 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import apiRouter from "./api/index.js";
 import { StatusCode } from "./utils/helper/constant.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./swagger/swagger-output.json" with { type: "json" };
 import "path";
 // import env f
 // rom "dotenv";
@@ -19,6 +21,8 @@ const start_server = async () => {
     app.get("/", (req, res) => {
       res.status(StatusCode.SUCCESS).send({ message: "This is home page" });
     });
+
+    app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     app.use("/api", apiRouter);
     app.get("/health", (req, res) => {

@@ -4,7 +4,7 @@ import {todo_add_validation} from "../../modules/todo.js";
 
 export const todo_add = async (req, res) => {
   if (!req.userId) {
-    res.status(404).send({ message: "user not found" });
+    res.status(404).send({ message: "User Id not found in token." });
   }
 
   const validationError = todo_add_validation(req.body);
@@ -32,7 +32,7 @@ export const todo_add = async (req, res) => {
   } catch (err) {
     console.log(err, "---------------------");
     
-    res.status(500).send({ message: "An error occurred during ToDo." });
+    res.status(500).send({ message: "Somthing went wrong in todo create" });
   }
 };
 
@@ -71,7 +71,7 @@ export const todo_update = async (req, res) => {
       description: newDescription,
     });
   } catch (err) {
-    res.status(500).send({ message: "you can not access another user data" });
+    res.status(500).send({ message: "Somthing went wrong in todo update" });
   }
 };
 
@@ -86,7 +86,7 @@ export const todo_show = async (req, res) => {
     const todos = await findTodosByUserId(req.userId);
     res.status(200).send({ todos });
   } catch (err) {
-    res.status(500).send({ message: "An error occurred during ToDo." });
+    res.status(500).send({ message: "Somthing went wrong in todo get." });
   }
 };
 
@@ -101,11 +101,11 @@ export const todo_delete = async (req, res) => {
 
 
     if (!todo) {
-      res.status(405).send({ message: "you can not authries to delete." });
+      res.status(401).send({ message: "you can not authries to delete." });
     } 
     await deleteTodoByIdAndUserId(id, req.userId);
     res.status(200).send({ message: "To-Do deleted successfully", id });
   } catch (err) {
-    res.status(401).send({ message: "to do not deleted" });
+    res.status(500).send({ message: "somthing went erong in todo delete" });
   }
 };

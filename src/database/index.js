@@ -12,8 +12,8 @@ const db = new pg.Client({
   port: process.env.PG_PORT,
 });
 
-db.connect()
-  .then(() => console.log("Database connected successfully"))
-  .catch((err) => console.error("Database Connection failed : ", err));
+// db.connect()
+//   .then(() => console.log("Database connected successfully"))
+//   .catch((err) => console.error("Database Connection failed : ", err));
 
 export default db;

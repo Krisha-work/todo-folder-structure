@@ -48,7 +48,7 @@ export const register = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: "An error occurred during signup." });
+    res.status(500).send({ message: "Somthing went wrong in SignUp." });
   }
 };
 
@@ -81,7 +81,7 @@ export const userLogin = async (req, res) => {
   } catch (err) {
     console.log(err);
 
-    res.status(500).send({ message: "An error occurred during login." });
+    res.status(500).send({ message: "Somthing went wrong in login" });
   }
 };
 
@@ -97,7 +97,7 @@ export const logoutUser = async (req, res) => {
 
     // const userInputId = matchIdResult.rows[0];
     if (!user) {
-      return res.status(400).send({
+      return res.status(404).send({
         message: "User is not exist",
       });
     }
@@ -111,7 +111,7 @@ export const logoutUser = async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .send({ message: "your todo is not empty so you can not logout." });
+      .send({ message: "Somthing went wrong in user logout" });
   }
 };
 
@@ -119,7 +119,7 @@ export const updateUser = async (req, res) => {
   const { id } = req.params;
 
   if (!req.userId) {
-    res.status(404).send({ message: "user not found" });
+    res.status(404).send({ message: "userid not found in token." });
   }
 
   // const validationError = update_user_validation(req.body);
@@ -133,9 +133,7 @@ export const updateUser = async (req, res) => {
   try {
     const user = await findUserById(id);
     if (!user) {
-      return res.status(400).send({
-        message: "User is not exist",
-      });
+      return res.status(400).send({ message: "User is not exist" });
     }
     if (user.id !== req.userId) {
       return res
@@ -168,13 +166,13 @@ export const updateUser = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: "An error occurred during signup." });
+    res.status(500).send({ message: "Somthing went wrong in user update." });
   }
 };
 
 export const userShow = async (req, res) => {
   if (!req.userId) {
-    res.status(404).send({ message: "user not found" });
+    res.status(404).send({ message: "userid not found in token." });
   }
 
   try {
@@ -184,7 +182,7 @@ export const userShow = async (req, res) => {
     }
     res.status(200).send({ userData });
   } catch (err) {
-    res.status(500).send({ message: err });
+    res.status(500).send({ message: "Somthong went wrong in user data get." });
   }
 };
 
