@@ -5,12 +5,9 @@ import { StatusCode } from "./utils/helper/constant.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "./swagger/swagger-output.json" with { type: "json" };
 import "path";
-// import env f
-// rom "dotenv";
-// env.config();
+
 
 const app = express();
-// const port = process.env.SERVER_PORT;
 // console.log(port, " port-------------");
 
 const start_server = async () => {
