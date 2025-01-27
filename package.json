@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "test": "mocha 'src/test/**/*.js' --timeout 10000",
     "start": "node src/index.js",
