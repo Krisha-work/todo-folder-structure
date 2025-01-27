@@ -33,7 +33,8 @@
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.5",
     "swagger-ui-express": "^5.0.1",
-    "url": "^0.11.4"
+    "url": "^0.11.4",
+    "vercel": "^39.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.26.4",
