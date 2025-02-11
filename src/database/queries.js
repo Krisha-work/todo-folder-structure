@@ -8,7 +8,7 @@ export const userQuery  = {
 }
 
 export const todoQuery = {
-    addTodo: 'INSERT INTO todo_data (title, description, user_id)VALUES ($1, $2, $3) RETURNING id;',
+    addTodo: 'INSERT INTO todo_data (title, description, user_id) VALUES ($1, $2, $3) RETURNING id;',
     userTodoJoin: 'select username from todo_data inner join userdata on todo_data.user_id = userdata.id where userdata.id = $1;',
     matchTodoId: 'SELECT * FROM todo_data WHERE id = $1 and user_id = $2;',
     updateTodo: 'update todo_data set title = coalesce($1, title), description = coalesce($2, description) where (id=$3 and user_id=$4);',
