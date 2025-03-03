@@ -1,3 +1,4 @@
+//PROJECT STARTING POINT
 
 import db from './database/index.js'
 import {start_server} from './server.js'

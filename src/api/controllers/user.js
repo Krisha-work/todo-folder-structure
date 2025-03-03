@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import bcryt from "bcryptjs";
 import {
   findUserByUsername,
@@ -8,108 +7,85 @@ import {
   updateUserById,
   deleteUserById,
 } from "../../database/user.js";
-import { login_validation, register_validtaion } from "../../modules/user.js";
+import { findTodosByUserId } from "../../database/todo.js";
+import { loginValidation, registerValidtaion } from "../../modules/user.js";
 import { createToken } from "../../middleware/createtoken.js";
 
 export const register = async (req, res) => {
-  const validationError = register_validtaion(req.body);
-  if (validationError !== true) {
+  const validationError = registerValidtaion(req.body);
+  if (validationError !== true)
     return res
       .status(validationError.status || 400)
       .send({ message: validationError.message });
-  }
 
   const { username, email, password, contact } = req.body;
   try {
-    const existingUser = await findUserByUsername(username);
-    // console.log("mmmmmmmmmmmmmmmmmmm");
-    // const userid = existingUser[0]?.id;
-    // console.log(userid, "----8888888888888888888888888888-----");
+    const existingUser = await findUserByUsername(email);
 
-    if (existingUser.length > 0) {
-      res.status(409).send({
-        message: "User already exists",
-        existingUser,
-      });
-    } else {
-      // Hash the password
+    if (existingUser.length > 0)
+      return res
+        .status(409)
+        .send({ message: "User already exists", existingUser });
+    else {
       const hashedPassword = await bcryt.hash(password, 8);
-      // Insert the new user into the database
-      const userid = await addUser(username, email, hashedPassword, contact);
+      await addUser(username, email, hashedPassword, contact);
 
-      // Send a success response
-      res.status(201).send({
-        message: "Signup data inserted successfully",
-        // userid,
+      return res.status(201).send({
+        message: "User Register successfully",
         username,
         email,
         contact,
       });
     }
   } catch (err) {
-    console.error(err);
-    res.status(500).send({ message: "Somthing went wrong in SignUp." });
+    return res.status(500).send({ message: "Somthing went wrong in SignUp." });
   }
 };
 
 export const userLogin = async (req, res) => {
-  const validationError = login_validation(req.body);
-  if (validationError !== true) {
+  const validationError = loginValidation(req.body);
+  if (validationError !== true)
     return res
       .status(validationError.status || 400)
       .send({ message: validationError.message });
-  }
 
   const { emailOrContact, password } = req.body;
 
   try {
     const user = await findUserByEmailOrContact(emailOrContact);
-    if (!user) {
-      return res
-        .status(401)
-        .send({ message: "Invalid credentials in email or Contact." });
-    }
-    if (!(await bcryt.compare(password, user.password))) {
-      return res
-        .status(401)
-        .send({ message: "Invalid credentials in Password." });
-    }
+    if (!user || !(await bcryt.compare(password, user.password)))
+      return res.status(401).send({ message: "Invalid credential." });
 
     const token = createToken(user.id);
-
-    res.status(200).send({ message: "Login successful", token, user });
+    return res.status(200).send({ message: "Login successful", token, user });
   } catch (err) {
-    console.log(err);
-
-    res.status(500).send({ message: "Somthing went wrong in login" });
+    return res.status(500).send({ message: "Somthing went wrong in login" });
   }
 };
 
 export const logoutUser = async (req, res) => {
   const { id } = req.params;
 
-  if (!req.userId) {
-    res.status(404).send({ message: "user not found" });
-  }
+  if (!req.userId) return res.status(404).send({ message: "user not found" });
 
   try {
     const user = await findUserById(id);
 
-    // const userInputId = matchIdResult.rows[0];
-    if (!user) {
-      return res.status(404).send({
-        message: "User is not exist",
-      });
-    }
-    if (user.id !== req.userId) {
+    if (!user) return res.status(404).send({ message: "User is not exist" });
+
+    if (user.id !== req.userId)
       return res.status(400).send({ message: "You are not authorized" });
-    }
-    // console.log("-------not emty todo");
+
+    const result = await findTodosByUserId(id);
+    if (result.length > 0)
+      return res.status(405).send({
+        message: "can’t delete your self as todo is exist in your bucket",
+      });
 
     await deleteUserById(req.userId);
-    res.status(200).json({ message: "Logout successfully" });
+    return res.status(200).json({ message: "Logout successfully" });
   } catch (err) {
-    res
+    return res
       .status(500)
       .send({ message: "Somthing went wrong in user logout" });
   }
@@ -118,28 +94,18 @@ export const logoutUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   const { id } = req.params;
 
-  if (!req.userId) {
-    res.status(404).send({ message: "userid not found in token." });
-  }
-
-  // const validationError = update_user_validation(req.body);
-  // if (validationError !== true) {
-  //   return res
-  //     .status(validationError.status || 400)
-  //     .send({ message: validationError.message });
-  // }
+  if (!req.userId)
+    return res.status(404).send({ message: "userid not found in token." });
 
   const { username, email, password, contact } = req.body;
   try {
     const user = await findUserById(id);
-    if (!user) {
-      return res.status(400).send({ message: "User is not exist" });
-    }
-    if (user.id !== req.userId) {
+    if (!user) return res.status(400).send({ message: "User is not exist" });
+
+    if (user.id !== req.userId)
       return res
         .status(400)
         .send({ message: "User cannot access another's data" });
-    }
 
     // Prepare new data
     const newUsername = username || user.username;
@@ -158,32 +124,31 @@ export const updateUser = async (req, res) => {
       newContact
     );
 
-    res.status(200).send({
+    return res.status(200).send({
       message: "User data updated successfully",
       username: newUsername,
       email: newEmail,
       contact: newContact,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).send({ message: "Somthing went wrong in user update." });
+    return res
+      .status(500)
+      .send({ message: "Somthing went wrong in user update." });
   }
 };
 
 export const userShow = async (req, res) => {
-  if (!req.userId) {
-    res.status(404).send({ message: "userid not found in token." });
-  }
+  if (!req.userId)
+    return res.status(404).send({ message: "userid not found in token." });
 
   try {
     const userData = await findUserById(req.userId);
-    if (!userData) {
-      res.status(400).send({ message: "user not found" });
-    }
-    res.status(200).send({ userData });
+    if (!userData) return res.status(400).send({ message: "user not found" });
+
+    return res.status(200).send({ userData });
   } catch (err) {
-    res.status(500).send({ message: "Somthong went wrong in user data get." });
+    return res
+      .status(500)
+      .send({ message: "Somthong went wrong in user data get." });
   }
 };
-
-// export default { register, userLogin, updateUser, logoutUser };

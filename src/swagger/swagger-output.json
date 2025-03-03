@@ -13,7 +13,7 @@
       "type": "apiKey",
       "name": "Authorization",
       "in": "header",
-      "description": "Enter 'Bearer <your_jwt_token>' to authenticate"
+      "description": "Enter '<your_jwt_token>' to authenticate"
     }
   },
   "paths": {
@@ -206,7 +206,7 @@
         }
       }
     },
-    "/api/user/user/{id}": {
+    "/api/user/user/:id": {
       "put": {
         "description": "",
         "security": [
@@ -219,7 +219,7 @@
             "name": "Enter user id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "number"
           },
           {
             "name": "body",

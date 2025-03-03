@@ -1,4 +1,4 @@
-import { StatusCode } from "../helper/constant.js";
+import { StatusCode } from "../constant.js";
 
 export const validUsername = (username) =>{
   if(!username){
@@ -13,7 +13,7 @@ export const validUsername = (username) =>{
 export const validatePassword = (password) => {
   if (!password) {
     return {
-      status: StatusCode.BAD_REQUEST,
+      status: StatusCode.BAD_REQUEST, 
       message: "Password is required",
     };
   }
@@ -56,7 +56,9 @@ export const validateContact = (contact) => {
     }
   }
 
-  const regex = /^[6-9]\d{9}$/;
+///^(?=.*\d)[\d]{9,9}$/
+
+  const regex = /^(?=.*\d)[\d]{10}$/ ;
   if(!regex.test(contact)){
     return{
       status: StatusCode.BAD_REQUEST,
@@ -74,7 +76,7 @@ export const validateEmailOrContact = (emailOrContact) => {
     }
   }
 
-  const emailRegex = (/^[^\s@]+@[^\s@]+\.[^\s@]+$/) || ( /^\d+$/);
+  const emailRegex = (/^[^\s@]+@[^\s@]+\.[^\s@]+$/) || (/^(?=.*\d)[\d]{10}$/);
   if(!emailRegex.test(emailOrContact)){
     return{
       status: StatusCode.BAD_REQUEST,

@@ -6,3 +6,4 @@ export const StatusCode = {
     INTERNAL_SERVER_ERROR:500
 
 }
+    

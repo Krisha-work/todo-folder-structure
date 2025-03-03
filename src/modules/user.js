@@ -6,7 +6,7 @@ import {
   validateEmailOrContact,
 } from "../utils/validation/common-validation.js";
 
-export const register_validtaion = (body) => {
+export const registerValidtaion = (body) => {
   const { username, email, password, contact } = body;
 
   const usernamValid = validUsername(username);
@@ -31,7 +31,7 @@ export const register_validtaion = (body) => {
 };
 
 
-export const login_validation = (body) => {
+export const loginValidation = (body) => {
   const { emailOrContact, password } = body;
 
   const emailContactValidation = validateEmailOrContact(emailOrContact);
@@ -47,7 +47,7 @@ export const login_validation = (body) => {
   return true;
 };
 
-export const update_user_validation = (body) => {
+export const updateUserValidation = (body) => {
   const { username, email, password, contact } = body;
 
   const usernamValid = validUsername(username);
