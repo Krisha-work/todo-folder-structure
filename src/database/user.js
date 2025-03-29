@@ -49,7 +49,8 @@ export const updateUserById = async (
   username,
   email,
   password,
-  contact
+  contact,
+  profile_image
 ) => {
   try {
     await db.query(userQuery.updateUser, [
@@ -57,6 +58,7 @@ export const updateUserById = async (
       email,
       password,
       contact,
+      profile_image,
       userId,
     ]);
     return true;

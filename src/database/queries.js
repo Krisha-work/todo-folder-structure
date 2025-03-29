@@ -6,7 +6,7 @@ export const userQuery = {
   addUser:
     "INSERT INTO userdata (username, email, password, contact) VALUES ($1, $2, $3, $4) RETURNING id;",
   updateUser:
-    "UPDATE userdata SET username = coalesce ($1, username), email = coalesce($2, email), password = coalesce($3, password), contact = coalesce($4, contact) WHERE id=$5;",
+    "UPDATE userdata SET username = coalesce ($1, username), email = coalesce($2, email), password = coalesce($3, password), contact = coalesce($4, contact), profile_image =  coalesce($5, profile_image) WHERE id=$6;",
   deleteUser: "delete from userdata where id=$1;",
 };
 

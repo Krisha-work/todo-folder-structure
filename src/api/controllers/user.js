@@ -97,15 +97,20 @@ export const updateUser = async (req, res) => {
   if (!req.userId)
     return res.status(404).send({ message: "userid not found in token." });
 
-  const { username, email, password, contact } = req.body;
+  const { username, email, password, contact, profile_image } = req.body;
   try {
     const user = await findUserById(id);
+    console.log(user, "user----");
+
     if (!user) return res.status(400).send({ message: "User is not exist" });
 
     if (user.id !== req.userId)
       return res
         .status(400)
         .send({ message: "User cannot access another's data" });
+    
+    let newProfileImage
+   
 
     // Prepare new data
     const newUsername = username || user.username;
@@ -114,6 +119,11 @@ export const updateUser = async (req, res) => {
       ? await bcryt.hash(password, 8)
       : user.password;
     const newContact = contact || user.contact;
+    newProfileImage = profile_image || user.profile_image;
+
+    if (req.file) {
+      newProfileImage = `./uploads/${req.file.filename}`;
+    }
 
     // Update the user in the database
     await updateUserById(
@@ -121,7 +131,8 @@ export const updateUser = async (req, res) => {
       newUsername,
       newEmail,
       newPassword,
-      newContact
+      newContact,
+      newProfileImage
     );
 
     return res.status(200).send({
@@ -129,8 +140,11 @@ export const updateUser = async (req, res) => {
       username: newUsername,
       email: newEmail,
       contact: newContact,
+      profile_image: newProfileImage,
     });
   } catch (err) {
+    console.log(err);
+
     return res
       .status(500)
       .send({ message: "Somthing went wrong in user update." });
